@@ -1,17 +1,18 @@
 from fastapi import APIRouter
 from bson import ObjectId
-
 from app.db import db
 from app.schemas.order import OrderCreate
 
 
 router = APIRouter()
 
+# Endpoint to create a new order
 @router.post("/orders", status_code=201)
 async def createOrder(order: OrderCreate):
     result = await db.orders.insert_one(order.dict())
     return {"id": str(result.inserted_id)}
 
+# Endpoint to get orders for a specific user
 @router.get("/orders/{user_id}")
 async def getOrders(user_id: str, limit: int = 10, offset: int = 0):
     query = {"userId": user_id}
@@ -44,11 +45,12 @@ async def getOrders(user_id: str, limit: int = 10, offset: int = 0):
             "total": round(total_price, 2)
         })
 
+    # Pagination logic
     return {
         "data": data,
         "page": {
+            "next": offset + limit if offset + limit > total else 10,
             "limit": limit,
-            "next": offset + limit if offset + limit < total else None,
-            "previous": max(offset - limit, 0) if offset > 0 else None
+            "previous": offset - limit,
         }
     }
