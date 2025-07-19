@@ -7,12 +7,12 @@ from app.models.product import productModel
 router = APIRouter()
 
 @router.post("/products", status_code=201)
-async def create_product(product: ProductCreate):
+async def createProduct(product: ProductCreate):
     result = await db.products.insert_one(product.dict())
     return {"id": str(result.inserted_id)}
 
 @router.get("/products", status_code=200)
-async def list_products(
+async def getProducts(
     name: Optional[str] = None,
     size: Optional[str] = None,
     limit: int = 10,
