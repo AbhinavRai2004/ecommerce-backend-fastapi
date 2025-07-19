@@ -12,3 +12,5 @@ class ProductCreate(BaseModel):
 
 class ProductOut(BaseModel):
     id: str
+    name: str
+    price: float
